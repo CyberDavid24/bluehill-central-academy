@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Key Logger Test</title>
+  <script>
+    document.addEventListener('keydown', function(event) {
+      let key = event.key;
+      let logDiv = document.getElementById('keylog');
+      logDiv.innerHTML += `<p>Key pressed: <strong>${key}</strong></p>`;
+    });
+  </script>
+</head>
+<body>
+  <h1>Key Logger Active</h1>
+  <div id="keylog" style="font-family: monospace;"></div>
+</body>
+</html>
