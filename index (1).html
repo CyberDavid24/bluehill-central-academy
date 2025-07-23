@@ -1,18 +1,612 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Key Logger Test</title>
-  <script>
-    document.addEventListener('keydown', function(event) {
-      let key = event.key;
-      let logDiv = document.getElementById('keylog');
-      logDiv.innerHTML += `<p>Key pressed: <strong>${key}</strong></p>`;
-    });
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bluehill Central Academy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .logo svg {
+            width: 50px;
+            height: 50px;
+            fill: #1e3c72;
+        }
+
+        .header-text h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-text p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            background: none;
+            border: none;
+            padding: 1rem 2rem;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        .nav-tab:hover {
+            background-color: #f8f9fa;
+            color: #1e3c72;
+        }
+
+        .nav-tab.active {
+            color: #1e3c72;
+            border-bottom-color: #1e3c72;
+            background-color: #f8f9fa;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tab-content h2 {
+            color: #1e3c72;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #1e3c72;
+            padding-bottom: 0.5rem;
+        }
+
+        .motto {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .motto h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .motto p {
+            font-size: 1.2rem;
+            font-weight: 300;
+        }
+
+        .management-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .staff-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 5px solid #1e3c72;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .staff-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .staff-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1e3c72;
+            margin-bottom: 0.5rem;
+        }
+
+        .staff-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .staff-responsibilities {
+            list-style: none;
+            padding: 0;
+        }
+
+        .staff-responsibilities li {
+            background: white;
+            padding: 0.5rem;
+            margin: 0.3rem 0;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            border-left: 3px solid #2a5298;
+        }
+
+        .expectations-list {
+            counter-reset: expectation-counter;
+        }
+
+        .expectation {
+            background: #f8f9fa;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 5px solid #1e3c72;
+            counter-increment: expectation-counter;
+        }
+
+        .expectation h3 {
+            color: #1e3c72;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .expectation h3:before {
+            content: counter(expectation-counter) ". ";
+            color: #2a5298;
+            font-weight: bold;
+        }
+
+        .roblox-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 25px;
+            margin: 1rem 0;
+            transition: transform 0.3s ease;
+            font-weight: 600;
+        }
+
+        .roblox-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.3);
+        }
+
+        .application-box {
+            background: #e8f4f8;
+            border: 2px solid #1e3c72;
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .signature {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 5px;
+            font-style: italic;
+        }
+
+        .principal-welcome {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 2rem;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        .footer {
+            background: #1e3c72;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .header-text h1 {
+                font-size: 2rem;
+            }
+
+            .nav-container {
+                justify-content: flex-start;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .management-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-  <h1>Key Logger Active</h1>
-  <div id="keylog" style="font-family: monospace;"></div>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <svg viewBox="0 0 100 100">
+                    <circle cx="50" cy="25" r="8" fill="#1e3c72"/>
+                    <circle cx="25" r="8" cy="75" fill="#1e3c72"/>
+                    <circle cx="75" cy="75" r="8" fill="#1e3c72"/>
+                    <circle cx="50" cy="95" r="8" fill="#1e3c72"/>
+                    <path d="M35 35 L50 50 L65 35 M35 65 L50 50 L65 65 M35 35 L25 45 M65 35 L75 45 M35 65 L25 55 M65 65 L75 55" 
+                          stroke="#1e3c72" stroke-width="6" fill="none" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="header-text">
+                <h1>Bluehill Central Academy</h1>
+                <p>Excellence in Education • Changing Lives Daily</p>
+            </div>
+        </div>
+    </header>
+
+    <nav class="nav-tabs">
+        <div class="nav-container">
+            <button class="nav-tab active" onclick="showTab('info')">School Information</button>
+            <button class="nav-tab" onclick="showTab('management')">Management Team</button>
+            <button class="nav-tab" onclick="showTab('positions')">Open Positions</button>
+            <button class="nav-tab" onclick="showTab('expectations')">Academy Expectations</button>
+            <button class="nav-tab" onclick="showTab('principal')">Principal's Message</button>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div id="info" class="tab-content active">
+            <div class="motto">
+                <h3>'Changing Lives Daily'</h3>
+                <p>Dedication • Commitment • Participation</p>
+            </div>
+            
+            <h2>Welcome to Bluehill Central Academy</h2>
+            <p>At Bluehill Central, we are transforming the education experience. We believe every student deserves high quality education. And hence we deliver quality and dedicated lessons taught by our teachers who are 'Trained Practitioners' in the classroom, we ensure that every student gets the best at our academy.</p>
+            
+            <p>Here at Bluehill, we understand the struggles that students might be facing, or experiencing - we support not sanction. We are here for every single pupil that joins us. Our behaviour ladder is completely different to what other schools use which makes us unique. We allow students to develop as young adults.</p>
+            
+            <p>At Bluehill Central, we are not just about lessons. We are about experience. We ensure that every student has a memorable experience here at Bluehill. Our Staff team are dedicated at ensuring that all students have the same opportunities as anyone. Hence we train our staff to teach and deliver equipped and well lessons.</p>
+            
+            <p>Whether you're a former pupil a new pupil or a aspiring pupil we cannot wait to welcome you to Bluehill where you will learn and reach your full potential.</p>
+            
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 2rem;">
+                <a href="https://www.roblox.com/communities/715847641/Bluehill-Central-Academy" class="roblox-link" target="_blank">Join Our Roblox Community</a>
+                <a href="https://discord.gg/ymeSbpdz" class="roblox-link" target="_blank">Join Our Discord Server</a>
+            </div>
+        </div>
+
+        <div id="management" class="tab-content">
+            <h2>Management Team</h2>
+            <p>Our dedicated and passionate leadership team are here to support you. Please contact them by what department you want to speak to.</p>
+            
+            <div class="management-grid">
+                <div class="staff-card">
+                    <div class="staff-name">Mrs L Ellison</div>
+                    <div class="staff-title">Principal</div>
+                    <ul class="staff-responsibilities">
+                        <li>Whole School Oversight</li>
+                        <li>Teaching and Learning Lead</li>
+                        <li>Examination Lead</li>
+                    </ul>
+                </div>
+
+                <div class="staff-card">
+                    <div class="staff-name">Miss E Hagyard</div>
+                    <div class="staff-title">Head Of School</div>
+                    <ul class="staff-responsibilities">
+                        <li>Whole School Management</li>
+                        <li>Staffing Lead</li>
+                        <li>Development Lead</li>
+                        <li>Staff Discipline Lead</li>
+                    </ul>
+                </div>
+
+                <div class="staff-card">
+                    <div class="staff-name">Mrs E Bradford</div>
+                    <div class="staff-title">Vice Principal</div>
+                    <ul class="staff-responsibilities">
+                        <li>Quality Of Education</li>
+                        <li>Teaching and Learning Lead</li>
+                        <li>Examination Lead</li>
+                        <li>Curriculum Lead</li>
+                    </ul>
+                </div>
+
+                <div class="staff-card">
+                    <div class="staff-name">Mrs L Mae</div>
+                    <div class="staff-title">Vice Principal</div>
+                    <ul class="staff-responsibilities">
+                        <li>Safeguarding Lead</li>
+                        <li>Pupil Support Lead</li>
+                        <li>Attendance & Punctuality Lead</li>
+                    </ul>
+                </div>
+
+                <div class="staff-card">
+                    <div class="staff-name">Miss T Mortland</div>
+                    <div class="staff-title">Vice Principal</div>
+                    <ul class="staff-responsibilities">
+                        <li>Behaviour Lead</li>
+                        <li>ECT Lead</li>
+                        <li>ITT Lead</li>
+                    </ul>
+                </div>
+
+                <div class="staff-card">
+                    <div class="staff-name">Mrs I Clover</div>
+                    <div class="staff-title">Assistant Vice Principal</div>
+                    <ul class="staff-responsibilities">
+                        <li>Culture and Behaviour Lead</li>
+                        <li>Behaviour Support Unit Lead</li>
+                        <li>Student Disciplinary Lead</li>
+                    </ul>
+                </div>
+
+                <div class="staff-card">
+                    <div class="staff-name">Mr L Cade</div>
+                    <div class="staff-title">Assistant Vice Principal</div>
+                    <ul class="staff-responsibilities">
+                        <li>Whole School Activity Lead</li>
+                        <li>Event Coordinator Lead</li>
+                        <li>Events Lead</li>
+                    </ul>
+                </div>
+
+                <div class="staff-card">
+                    <div class="staff-name">Miss D Amaretto</div>
+                    <div class="staff-title">Assistant Vice Principal</div>
+                    <ul class="staff-responsibilities">
+                        <li>Sixth Form Lead</li>
+                        <li>Year Leadership Lead</li>
+                        <li>Learning Support Unit Lead</li>
+                    </ul>
+                </div>
+
+                <div class="staff-card">
+                    <div class="staff-name">Mrs L Hart</div>
+                    <div class="staff-title">Assistant Vice Principal</div>
+                    <ul class="staff-responsibilities">
+                        <li>Middle Leadership Lead</li>
+                        <li>Staff Discipline Lead</li>
+                        <li>Pupil Reward Lead</li>
+                    </ul>
+                </div>
+
+                <div class="staff-card">
+                    <div class="staff-name">Mr M Owens-Chambers</div>
+                    <div class="staff-title">Assistant Vice Principal</div>
+                    <ul class="staff-responsibilities">
+                        <li>Publications Department Lead</li>
+                        <li>Discord Development Lead</li>
+                        <li>Ticket Support Lead</li>
+                    </ul>
+                </div>
+
+                <div class="staff-card">
+                    <div class="staff-name">Mr T McKenziee</div>
+                    <div class="staff-title">Assistant Vice Principal</div>
+                    <ul class="staff-responsibilities">
+                        <li>Pupil Reward Lead</li>
+                        <li>Partnership Lead</li>
+                    </ul>
+                </div>
+
+                <div class="staff-card">
+                    <div class="staff-name">Mr K Douglas</div>
+                    <div class="staff-title">School Operations Manager</div>
+                    <ul class="staff-responsibilities">
+                        <li>Partnership Lead</li>
+                        <li>Development Assistant</li>
+                        <li>Staffing & Recruitment Coordinator</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="positions" class="tab-content">
+            <h2>Open Positions</h2>
+            
+            <div class="application-box">
+                <h3>Marketing Team Applications</h3>
+                <p>Hello there!</p>
+                <p>As the Publications Lead, I'm in charge of Social Media, meaning I have the ability to open Marketing Team Applications and Marketing Team Assistant Applications. If you want to be an Assistant, you need to either Edit, act, or Film. If you are a filmer you need to have a good filming device.</p>
+                
+                <p>So, without further ado, the Applications for Marketing Team are here! DM me the answers and say if you would like to be a filmer, editor and actor.</p>
+                
+                <a href="https://docs.google.com/document/d/1vWhzqFyjfU_1A7xqOCXLu4_CzIwDn7iJAX7riO3oheQ/edit?usp=sharing" class="roblox-link" target="_blank">View Application Form</a>
+                
+                <div class="signature">
+                    <p><strong>Signed,</strong></p>
+                    <p><strong>Mr. Michael Owens-Chambers</strong></p>
+                    <p><strong>Assistant Vice Principal, Publications Lead</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="expectations" class="tab-content">
+            <h2>Academy Expectations</h2>
+            <p>We take our guidelines here at Bluehill Central Academy very seriously. Not following our guidelines will result in a disciplinary action - depending on what you have done.</p>
+            
+            <div class="expectations-list">
+                <div class="expectation">
+                    <h3>Respect Everyone</h3>
+                    <p>At Bluehill Central, we expect students and staff to respect each other with respect. We do not tolerance any sort of disrespect from students or staff, and if seen you will be sanctioned.</p>
+                </div>
+
+                <div class="expectation">
+                    <h3>Non Unauthorised Advertising</h3>
+                    <p>Advertising without permission is completely prohibited. This includes sending any advertising message in (DMs) this includes sending advertisements through our channels. If you want to set an alliance make sure to meet the requirements and create a ticket.</p>
+                </div>
+
+                <div class="expectation">
+                    <h3>Privacy</h3>
+                    <p>Sharing, engaging, threatening or sending personal information (Doxxing) is not allowed and prohibited, and will result in a blacklist or ban. Or any necessary measures we have to take. This includes threats or harassment involving personal data, which is also a violation of Discord terms of service.</p>
+                </div>
+
+                <div class="expectation">
+                    <h3>Content Appropriation</h3>
+                    <p>Posting or sharing inappropriate or prohibited material including NSFW content, graphic violence or any disturbing images is not allowed in our server or chats whatsoever. Doing so will result in you being removed from our community.</p>
+                </div>
+
+                <div class="expectation">
+                    <h3>Terms Of Service</h3>
+                    <p>Bluehill Central follows both Discord and Roblox term of services. All members are expected to follow the term of service also. Violations will result in a consequence depending what you have done.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="principal" class="tab-content">
+            <h2>Principal's Message</h2>
+            
+            <div class="principal-welcome">
+                <p>Welcome to Bluehill Central Academy - a place where students thrive and grow as young individuals. As Principal, I'm glad to be leading a school full of talented and dedicated students who want to receive a quality education.</p>
+                
+                <p>At Bluehill Central we believe that every student deserves a right to learn. We train our young individuals to develop their skills and progress into higher education. We train our staff to be excellent practitioners in the classroom and deliver world class lessons.</p>
+                
+                <p>We follow a realistic manner, which means we take ideas and inspirations from real life schools. We are Proud to be serving East Manchester. We deliver exceptional services to the community and is recognised as a 'Outstanding' school.</p>
+                
+                <p>Our academy recruit exceptional staff who believes that pupils deserve a quality education, in any circumstances. We train our staff to be trained Practitioners in the classroom and deliver a 'Holistic Learning approach.'</p>
+                
+                <p>Our roleplay system is very realistic. Our staff are trained to teach in a realistic manner. And our school is a realistic environment. Staff start off as a 'ITT' and qualify with QTS. Then start their 'ECT' which can last for 3-5 weeks. After that staff are Fully Qualified and are given a Qualification that allows them to apply for Middle Leadership Roles.</p>
+                
+                <p>We hope we have convinced you about our school and we cannot wait to welcome you soon.</p>
+                
+                <div class="signature">
+                    <p><strong>Warm Regards,</strong></p>
+                    <p><strong>Adrian Costello</strong></p>
+                    <p><strong>Principal</strong></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 2rem;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem;">
+                <div class="logo" style="width: 50px; height: 50px;">
+                    <svg viewBox="0 0 100 100" style="width: 30px; height: 30px;">
+                        <circle cx="50" cy="25" r="8" fill="#1e3c72"/>
+                        <circle cx="25" cy="75" r="8" fill="#1e3c72"/>
+                        <circle cx="75" cy="75" r="8" fill="#1e3c72"/>
+                        <circle cx="50" cy="95" r="8" fill="#1e3c72"/>
+                        <path d="M35 35 L50 50 L65 35 M35 65 L50 50 L65 65 M35 35 L25 45 M65 35 L75 45 M35 65 L25 55 M65 65 L75 55" 
+                              stroke="#1e3c72" stroke-width="6" fill="none" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3>Bluehill Central Academy</h3>
+                    <p>Excellence in Education • Changing Lives Daily</p>
+                </div>
+            </div>
+            <p>&copy; 2024 Bluehill Central Academy. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active class from all nav tabs
+            const navTabs = document.querySelectorAll('.nav-tab');
+            navTabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked nav tab
+            event.target.classList.add('active');
+        }
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
 </body>
 </html>
